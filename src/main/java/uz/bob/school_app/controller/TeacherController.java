@@ -33,20 +33,25 @@ public class TeacherController {
     public String add(@RequestBody TeacherDto teacherDto){
         Teacher teacher=new Teacher();
         teacher.setFullName(teacherDto.getName());
+        boolean existsByPhoneNumber = teacherRepository.existsByPhoneNumber(teacherDto.getPhoneNumber());
+        if (existsByPhoneNumber){
+            subjectList.clear();
+            return "Phone number already exist";
+        }
         teacher.setPhoneNumber(teacherDto.getPhoneNumber());
         List<Integer> subjectsIds = teacherDto.getSubjectsIds();
         for (Integer subjectsId : subjectsIds) {
             Optional<Subject> optionalSubject = subjectRepository.findById(subjectsId);
-            if (!optionalSubject.isPresent())
+            if (!optionalSubject.isPresent()) {
+                subjectList.clear();
                 return "Subject not founded";
+            }
             subjectList.add(optionalSubject.get());
 
         }
-//        subjectsIds.forEach(integer ->subjectRepository.findById(integer).ifPresent(subjectList::add));
-//        if (subjectList.isEmpty())
-//            return "Subjects not founded";
         teacher.setSubjects(subjectList);
         teacherRepository.save(teacher);
+        subjectList.clear();
         return "Teacher saved";
     }
 }

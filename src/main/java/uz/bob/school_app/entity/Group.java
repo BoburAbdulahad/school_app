@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Entity(name = "groups")
-
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"name","school_id"}))
 public class Group {
 
     @Id

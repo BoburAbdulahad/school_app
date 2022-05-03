@@ -37,17 +37,30 @@ public class GroupController {
     @PostMapping
     public String add(@RequestBody GroupDto groupDto){
         Group group=new Group();
-        group.setName(groupDto.getName());
-        Optional<School> optionalSchool = schoolRepository.findById(groupDto.getSchoolId());
-        if (!optionalSchool.isPresent())
-            return "School not found";
-        group.setSchool(optionalSchool.get());
-        groupDto.getTeachersIds().forEach(integer -> teacherRepository.findById(integer).ifPresent(teacherList::add));
-        if (teacherList.isEmpty())
-            return "Teachers not found";
-        group.setTeacher(teacherList);
+        boolean exists = groupRepository.existsByNameAndSchoolId(groupDto.getName(), groupDto.getSchoolId());
+        if (exists){
+            teacherList.clear();
+            return "This group such as in the school";
+        }
 
+        group.setName(groupDto.getName());
+
+        Optional<School> optionalSchool = schoolRepository.findById(groupDto.getSchoolId());
+
+        if (!optionalSchool.isPresent()) {
+            teacherList.clear();
+            return "School not found";
+        }
+        group.setSchool(optionalSchool.get());
+
+        groupDto.getTeachersIds().forEach(integer -> teacherRepository.findById(integer).ifPresent(teacherList::add));
+        if (teacherList.isEmpty()) {
+            teacherList.clear();
+            return "Teachers not found";
+        }
+        group.setTeacher(teacherList);
         groupRepository.save(group);
+        teacherList.clear();
         return "Group saved";
     }
 }

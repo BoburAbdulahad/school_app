@@ -7,4 +7,5 @@ import uz.bob.school_app.entity.School;
 
 @Repository
 public interface GroupRepository extends JpaRepository<Group,Integer> {
+    boolean existsByNameAndSchoolId(String name, Integer school_id);
 }

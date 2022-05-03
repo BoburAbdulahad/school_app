@@ -7,4 +7,5 @@ import uz.bob.school_app.entity.Teacher;
 
 @Repository
 public interface TeacherRepository extends JpaRepository<Teacher,Integer> {
+    boolean existsByPhoneNumber(String phoneNumber);
 }
