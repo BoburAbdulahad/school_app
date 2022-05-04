@@ -24,6 +24,6 @@ public class Group {
     @ManyToOne(optional = false)
     private School school;
 
-    @ManyToMany
-    private List<Teacher> teacher;
+//    @ManyToMany
+//    private List<Teacher> teacher;
 }

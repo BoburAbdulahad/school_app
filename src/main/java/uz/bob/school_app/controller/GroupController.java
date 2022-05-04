@@ -24,11 +24,6 @@ public class GroupController {
     @Autowired
     SchoolRepository schoolRepository;
 
-    @Autowired
-    TeacherRepository teacherRepository;
-
-    List<Teacher> teacherList=new ArrayList<>();
-
     @GetMapping
     public List<Group> get(){
         return groupRepository.findAll();
@@ -39,28 +34,33 @@ public class GroupController {
         Group group=new Group();
         boolean exists = groupRepository.existsByNameAndSchoolId(groupDto.getName(), groupDto.getSchoolId());
         if (exists){
-            teacherList.clear();
             return "This group such as in the school";
         }
-
+        group.setName(groupDto.getName());
+        Optional<School> optionalSchool = schoolRepository.findById(groupDto.getSchoolId());
+        if (!optionalSchool.isPresent()) {
+            return "School not found";        }
+        group.setSchool(optionalSchool.get());
+        groupRepository.save(group);
+        return "Group saved";
+    }
+    @PutMapping("/{id}")
+    public String edit(@PathVariable Integer id,@RequestBody GroupDto groupDto){
+        if (!groupRepository.findById(id).isPresent()) {
+            return "Group not edited";
+        }
+        Group group = groupRepository.getById(id);
         group.setName(groupDto.getName());
 
-        Optional<School> optionalSchool = schoolRepository.findById(groupDto.getSchoolId());
-
-        if (!optionalSchool.isPresent()) {
-            teacherList.clear();
-            return "School not found";
+        group.setSchool(schoolRepository.getById(groupDto.getSchoolId()));
+        return "Group edited";
+    }
+    @DeleteMapping("/{id}")
+    public String delete(@PathVariable Integer id){
+        if (!groupRepository.findById(id).isPresent()) {
+            return "Group not founded";
         }
-        group.setSchool(optionalSchool.get());
-
-        groupDto.getTeachersIds().forEach(integer -> teacherRepository.findById(integer).ifPresent(teacherList::add));
-        if (teacherList.isEmpty()) {
-            teacherList.clear();
-            return "Teachers not found";
-        }
-        group.setTeacher(teacherList);
-        groupRepository.save(group);
-        teacherList.clear();
-        return "Group saved";
+        groupRepository.deleteById(id);
+        return "Group deleted";
     }
 }

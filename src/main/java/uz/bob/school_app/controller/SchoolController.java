@@ -1,14 +1,12 @@
 package uz.bob.school_app.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import uz.bob.school_app.entity.School;
 import uz.bob.school_app.repository.SchoolRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/school")
@@ -28,6 +26,26 @@ public class SchoolController {
     public String addSchool(@RequestBody School school){
         schoolRepository.save(school);
         return "School added";
+    }
+    @PutMapping("/{id}")
+    public String edit(@PathVariable Integer id,@RequestBody School school){
+        Optional<School> optionalSchool = schoolRepository.findById(id);
+        if (!optionalSchool.isPresent()) {
+            return "School not founded";
+        }
+        School school1 = optionalSchool.get();
+        school1.setName(school.getName());
+        schoolRepository.save(school1);
+        return "School edited";
+    }
+
+    @DeleteMapping("/{id}")
+    public String delete(@PathVariable Integer id){
+        if (!schoolRepository.findById(id).isPresent()) {
+            return "School not deleted";
+        }
+        schoolRepository.deleteById(id);
+        return "School deleted";
     }
 
 }

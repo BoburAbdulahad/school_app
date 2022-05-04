@@ -54,4 +54,25 @@ public class TeacherController {
         subjectList.clear();
         return "Teacher saved";
     }
+    @PutMapping("/{id}")
+    public String edit(@PathVariable Integer id,@RequestBody TeacherDto teacherDto){
+        if (!teacherRepository.findById(id).isPresent()) {
+            return "Teacher not edited";
+        }
+        Teacher currentTeacher = teacherRepository.getById(id);
+        currentTeacher.setFullName(teacherDto.getName());
+        currentTeacher.setPhoneNumber(teacherDto.getPhoneNumber());
+        List<Subject> subjects=subjectRepository.findAllById(teacherDto.getSubjectsIds());
+        currentTeacher.setSubjects(subjects);
+        teacherRepository.save(currentTeacher);
+        return "Teacher edited";
+    }
+    @DeleteMapping("/{id}")
+    public String delete(@PathVariable Integer id){
+        if (!teacherRepository.findById(id).isPresent()) {
+            return "Teacher not deleted";
+        }
+        teacherRepository.deleteById(id);
+        return "Teacher deleted";
+    }
 }

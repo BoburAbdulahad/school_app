@@ -67,11 +67,31 @@ public class TimeTableController {
         return "Time table successfully added";
     }
 
+    @PutMapping("/{id}")
+    public String edit(@PathVariable Integer id,@RequestBody TimeTableDto timeTableDto){
+        if (!timeTableRepository.findById(id).isPresent()) {
+            return "Time table not found";
+        }
+        TimeTable timeTable = timeTableRepository.getById(id);
+        timeTable.setDay(timeTableDto.getDay());
+        DateTimeFormatter formatter=DateTimeFormatter.ofPattern("HH:mm:ss");
+        LocalTime startTime=LocalTime.parse(timeTableDto.getStart(),formatter);
+        LocalTime endTime = startTime.plusMinutes(45);
+        timeTable.setStart(startTime);
+        timeTable.setEnd(endTime);
+        timeTable.setGroup(groupRepository.getById(timeTableDto.getGroupId()));
+        timeTable.setSubject(subjectRepository.getById(timeTableDto.getSubjectId()));
+        timeTable.setTeacher(teacherRepository.getById(timeTableDto.getTeacherId()));
+        timeTableRepository.save(timeTable);
+        return "Time table edited";
+    }
+    @DeleteMapping("/{id}")
+    public String delete(@PathVariable Integer id){
+        if (!timeTableRepository.findById(id).isPresent()) {
+            return "Time table not deleted";
+        }
+        timeTableRepository.deleteById(id);
+        return "Time table deleted";
+    }
 
-//    public static void main(String[] args) {
-//        DateTimeFormatter formatter=DateTimeFormatter.ofPattern("H:mm:ss");
-//        String time="8:00:00";
-//        LocalTime localTime=LocalTime.parse(time,formatter);
-//        System.out.println(localTime);
-//    }
 }

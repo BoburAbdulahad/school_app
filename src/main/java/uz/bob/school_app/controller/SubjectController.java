@@ -25,4 +25,21 @@ public class SubjectController {
         return "Subject added";
     }
 
+    @PutMapping("/{id}")
+    public String edit(@PathVariable Integer id,@RequestBody Subject subject){
+        if (!subjectRepository.findById(id).isPresent()) {
+            return "Subject not edited";
+        }
+        Subject subject1 = subjectRepository.getById(id);
+        subject1.setName(subject.getName());
+        return "Subject edited";
+    }
+    @DeleteMapping("/{id}")
+    public String delete(@PathVariable Integer id){
+        if (!subjectRepository.findById(id).isPresent()) {
+            return "Subject not deleted";
+        }
+        subjectRepository.deleteById(id);
+        return "Subject deleted";
+    }
 }

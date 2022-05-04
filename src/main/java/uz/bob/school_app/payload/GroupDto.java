@@ -8,5 +8,5 @@ import java.util.List;
 public class GroupDto {
     private String name;
     private Integer schoolId;
-    private List<Integer> teachersIds;
+//    private List<Integer> teachersIds;
 }

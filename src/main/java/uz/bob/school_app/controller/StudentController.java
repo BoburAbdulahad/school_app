@@ -41,4 +41,24 @@ public class StudentController {
         studentRepository.save(student);
         return "Student saved";
     }
+    @PutMapping("/{id}")
+    public String edit(@PathVariable Integer id,@RequestBody StudentDto studentDto){
+        if (!studentRepository.findById(id).isPresent()) {
+            return "Student not founded";
+        }
+        Student student = studentRepository.getById(id);
+        student.setFirstName(studentDto.getFirstName());
+        student.setLastName(studentDto.getLastName());
+        student.setGroup(groupRepository.getById(studentDto.getGroupId()));
+        studentRepository.save(student);
+        return "Student edited";
+    }
+    @DeleteMapping("/{id}")
+    public String delete(@PathVariable Integer id){
+        if (!studentRepository.findById(id).isPresent()) {
+            return "Not deleted";
+        }
+        studentRepository.deleteById(id);
+        return "Student deleted";
+    }
 }

@@ -58,4 +58,26 @@ public class MarkController {
         markRepository.save(mark);
         return "Mark saved";
     }
+    @PutMapping("/{id}")
+    public String edit(@PathVariable Integer id,@RequestBody MarkDto markDto){
+        if (!markRepository.findById(id).isPresent()) {
+            return "Mark row not found by id";
+        }
+        Mark mark = markRepository.getById(id);
+        mark.setStudent(studentRepository.getById(markDto.getStudentId()));
+        mark.setSubject(subjectRepository.getById(markDto.getSubjectId()));
+        mark.setTeacher(teacherRepository.getById(markDto.getTeacherId()));
+        mark.setMarkValue(markDto.getMarkValue());
+        markRepository.save(mark);
+        return "Mark edited";
+    }
+    @DeleteMapping("/{id}")
+    public String delete(@PathVariable Integer id){
+        Optional<Mark> optionalMark = markRepository.findById(id);
+        if (!optionalMark.isPresent()) {
+            return "Mark not founded";
+        }
+        markRepository.delete(optionalMark.get());
+        return "Mark deleted";
+    }
 }
